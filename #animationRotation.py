@@ -2,6 +2,14 @@
 
 import maya.cmds as cmds
 
+def keyFullRotation (pObjectName, pStartTime, pEndTime, pTargetAttribute):
+    
+     cmds.cutKey (pObjectName, time = (pStartTime, pEndTime), attribute=pTargetAttribute)
+     cmds.setKeyframe (pObjectName, time = pStartTime, attribute=pTargetAttribute, value=0)
+     cmds.setKeyframe (pObjectName, time = pEndTime, attribute=pTargetAttribute, value=360)
+     cmds.selectKey (pObjectName, time = (pStartTime, pEndTime), attribute=pTargetAttribute, keyframe=True)
+     cmds.keyTangent (inTangentType='linear', outTangentType='linear')
+
 selectionList = cmds.ls(selection=True, type='transform')
 
 if len(selectionList)>=1:
@@ -14,11 +22,7 @@ if len(selectionList)>=1:
         
         objectTypeResult = cmds.objectType (objectName)
         
-        cmds.cutKey (objectName, time = (startTime, endTime), attribute='rotateY')
-        cmds.setKeyframe (objectName, time = startTime, attribute='rotateY', value=0)
-        cmds.setKeyframe (objectName, time = endTime, attribute='rotateY', value=360)
-        cmds.selectKey (objectName, time = (startTime, endTime), attribute='rotateY', keyframe=True)
-        cmds.keyTangent (inTangentType='linear', outTangentType='linear')
+        keyFullRotation (objectName. startTime. endTIme. 'rotateY')
         
 else:
     print 'Please select two or more objests.'
