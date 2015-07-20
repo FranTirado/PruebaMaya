@@ -1,6 +1,7 @@
-#createRandomwithUI.py
+#createRotwithUI.py
 
 import maya.cmds as cmds
+import functools
 
 
 #Definimos la apariencia y contenido de la ventana:
@@ -22,7 +23,7 @@ def createUI (pWindowTitle, pApplyCallback):
     
     #Segunda fila:
     cmds.text (label = 'Prueba2')
-    targetAtribbuteField = cmds.textField (text = 'rotateY')
+    targetAttributeField = cmds.textField (text = 'rotateY')
     cmds.separator (h=10, style='none')
     
     #Tercera fila:
@@ -32,7 +33,7 @@ def createUI (pWindowTitle, pApplyCallback):
     
     #Cuerta fila:
     cmds.separator (h=10, style='none')
-    cmds.button (label='Apply', command=applyCallback)
+    cmds.button (label='Apply', command= functools.partial(applyCallback, startTimeField, endTimeField,targetAttributeField))
     
     #Definimos la accion del bonton cancelar:
     def cancelCallback (*pArgs):
@@ -42,10 +43,26 @@ def createUI (pWindowTitle, pApplyCallback):
                 
     cmds.showWindow()
     
-#Definimos la accion del boton aplicar:
-def applyCallback (*pArgs):
-    print 'Apply button pressed.'
+#Definicion de la rotacion:
+def keyFullRotation (pObjectName, pStartTime, pEndTime, pTargetAttribute):
     
+     cmds.cutKey (pObjectName, time = (pStartTime, pEndTime), attribute=pTargetAttribute)
+     cmds.setKeyframe (pObjectName, time = pStartTime, attribute=pTargetAttribute, value=0)
+     cmds.setKeyframe (pObjectName, time = pEndTime, attribute=pTargetAttribute, value=360)
+     cmds.selectKey (pObjectName, time = (pStartTime, pEndTime), attribute=pTargetAttribute, keyframe=True)
+     cmds.keyTangent (inTangentType='linear', outTangentType='linear')
+    
+#Definimos la accion del boton aplicar:
+def applyCallback (pApplyCallback, pStartTimeField, pEndTimeField,pTargetAttributeField, *pArgs):
+      
+    startTime = cmds.intField (pStartTimeField, query=True, value=True)
+    endTime = cmds.intField (pEndTimeField, query=True, value=True)
+    targetAtribbute = cmds.textField (pTargetAttributeField, query=True, text=True)
+    
+    selectionList = cmds.ls (selection=True, type='transform')
+    
+    for objectName in selectionList:
+        keyFullRotation (objectName, startTime, endTime, targetAttribute)
     
 #Llamamos a la definciion para crear la ventana:
 createUI ('My Title', applyCallback)
