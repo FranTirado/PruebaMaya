@@ -6,7 +6,10 @@ window = cmds.window(title = 'Seleccinador de elementos', sizeable=False, resize
 cmds.rowColumnLayout (numberOfColumns=2, columnWidth=[(1,100), (2,300)], columnOffset = [(1, 'right', 3)])
 
 cmds.separator (h=10, style='none')
-cmds.separator (h=10, style='none')   
+cmds.separator (h=10, style='none') 
+
+cmds.separator (h=10, style='none')
+cmds.separator (h=10, style='none')    
  
 cmds.text( label='Seleccinar objeto: ' )
 objSelectField = cmds.textField('')
